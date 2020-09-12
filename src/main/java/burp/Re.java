@@ -1,0 +1,131 @@
+package burp;
+
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Re {
+    // 手机号匹配
+    public static String Phone(String str){
+        ArrayList<String> phones = new ArrayList<>();
+        String is_number = "\\d{11,}";
+        Matcher matcher = Pattern.compile(is_number).matcher(str);
+        if (matcher != null) {
+            while (matcher.find())
+            {
+                if (matcher.group().length() == 11) {
+                    String is_phone = "^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|17[6|7|9]|18[0-9])\\d{8}$";
+                    Matcher matcher2 = Pattern.compile(is_phone).matcher(matcher.group());
+                    if (matcher2 != null) {
+                        while (matcher2.find()) {
+                            phones.add(matcher2.group());
+                        }
+                    }
+                }
+            }
+            return StringUtils.strip(phones.toString(),"[]");
+        }
+        return null;
+    }
+    // 匹配地址
+    public static String Address(String str){
+        String address = new String();
+        String is_address ="(?:(北京|天津|上海|重庆|台湾|.+(省|自治区|特别行政区))(?:市)?.+(市|自治州).+(区|县|旗)?.+(?:(镇|乡|街道))?.+(?:(.+[村|社区|街道])).*)" +
+                "|(?:(\\u5317\\u4eac|\\u5929\\u6d25|\\u4e0a\\u6d77|\\u91cd\\u5e86|\\u53f0\\u6e7e|.+(\\u7701|\\u81ea\\u6cbb\\u533a|\\u7279\\u522b\\u884c\\u653f\\u533a))(?:\\u5e02)?.+(\\u5e02|\\u81ea\\u6cbb\\u5dde).+(\\u533a|\\u53bf|\\u65d7)?.+(?:(\\u9547|\\u4e61|\\u8857\\u9053))?.+(?:(.+[\\u6751|\\u793e\\u533a|\\u8857\\u9053])).*)";
+        Matcher matcher = Pattern.compile(is_address).matcher(str);
+        if (matcher != null){
+            while (matcher.find()){
+                address+=matcher.group();
+            }
+            return address;
+        }
+        return null;
+    }
+    //身份证匹配
+    public static String IdCard(String str){
+        ArrayList<String> id = new ArrayList<>();
+        String is_id = "[1-9]\\d{5}(?:19|20)\\d\\d(?:0[1-9]|1[012])(?:0[1-9]|[12]\\d|3[01])\\d{3}(?:\\d|X|x)";
+        Matcher matcher = Pattern.compile(is_id).matcher(str);
+        if (matcher != null){
+            while (matcher.find()){
+                id.add(matcher.group());
+            }
+            return  StringUtils.strip(id.toString(),"[]");
+        }
+        return null;
+    }
+    //特殊字段匹配
+    public static String Password(String str){
+        ArrayList<String> pwd = new ArrayList<>();
+        String is_pwd = "(?:\"pwd\"|\"password\":|pwd=|password=|config/api" +
+                "|method: 'get'|method: 'post'|method: \"get\"|method: \"post\"" +
+                "|service\\.httppost|service\\.httpget|\\$\\.ajax|http\\.get\\(\"|http\\.post\\(\")";
+        Matcher matcher = Pattern.compile(is_pwd).matcher(str);
+        if (matcher != null){
+            while (matcher.find()){
+                pwd.add(matcher.group());
+            }
+            return  StringUtils.strip(pwd.toString(),"[]");
+        }
+        return null;
+
+    }
+    // ip地址匹配
+    public static String IP(String str){
+        ArrayList<String> ip = new ArrayList<>();
+//        String is_ip = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
+        String is_ip = "\\b(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0]|[1-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
+        // 内网ip规则
+        String in_ip = "(?:10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|(?:172\\.(?:(?:1[6-9])|(?:2\\d)|(?:3[01]))\\.\\d{1,3}\\.\\d{1,3})|(?:192\\.168\\.\\d{1,3}\\.\\d{1,3})";
+        Matcher matcher = Pattern.compile(is_ip).matcher(str);
+        if (matcher != null){
+            while (matcher.find()){
+                ip.add(matcher.group());
+            }
+            return  StringUtils.strip(ip.toString(),"[]");
+        }
+        return null;
+    }
+    //邮箱匹配
+    public static String Email(String str){
+        ArrayList<String> email = new ArrayList<>();
+        String is_email = "[\\w-]+(?:\\.[\\w-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[A-Za-z]{2,6}";
+        Matcher matcher = Pattern.compile(is_email).matcher(str);
+        if (matcher != null){
+            while (matcher.find()){
+                email.add(matcher.group());
+            }
+            return  StringUtils.strip(email.toString(),"[]");
+        }
+        return null;
+    }
+
+    // js路径匹配
+    public static String Path(String str){
+//        ArrayList<String> path = new ArrayList<>();   //使用了String拼接
+        String path = new String();
+        String is_path = "['|\"](/[0-9a-z.]+(?:/.+?))['|\"]";
+        Matcher matcher = Pattern.compile(is_path).matcher(str);
+        if (matcher != null){
+            while (matcher.find()){
+//                path.add(matcher.group());
+                path += StringUtils.strip(matcher.group(),"\"'")+'\n';
+            }
+//            return  StringUtils.strip(path.toString(),"[]");
+            return path;
+        }
+        return null;
+    }
+    // 判断javascript文件
+    public static boolean js (String headers,byte[] content){
+        if (headers.contains("/javascript")){
+            if (Re.Path(new String(content)).length() != 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+}
