@@ -54,4 +54,4 @@ https://github.com/ScriptKid-Beta/Unexpected_information
 
 #### 最后
 
-欢迎师傅star，最重要的是如果师傅们有什么建议或者Bug，请在ISSUES里提出来或者公众号留言。
+欢迎师傅Star，最重要的是如果师傅们有什么建议或者Bug，请在ISSUES里提出来或者公众号留言。
