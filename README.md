@@ -11,7 +11,7 @@ Unexpected information Extensions
 - [x] 手机号信息
 - [x] IP信息
 - [x] 邮箱信息
-- [x] JS文件API接口
+- [x] JS文件API接口路径
 - [x] 特殊字段(password、method: "post"...)
 - [x] 双向检测
 - [x] 高亮显示
