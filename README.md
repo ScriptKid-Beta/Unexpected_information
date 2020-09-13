@@ -34,13 +34,13 @@ BurpSuite >> Extender >> Extensions >> Add >> Extension type: Java >> Select fil
 注意：避免使用中文目录
 ```
 
-![image-20200913144353237](/AppData/Roaming/Typora/typora-user-images/image-20200913144353237.png)
+![image-20200913144353237](/image-20200913144353237.png)
 
 #### 效果
 
-![image-20200913151710096](/AppData/Roaming/Typora/typora-user-images/image-20200913151710096.png)
+![image-20200913151710096](/image-20200913151710096.png)
 
-![image-20200913152201413](/AppData/Roaming/Typora/typora-user-images/image-20200913152201413.png)
+![image-20200913152201413](/image-20200913152201413.png)
 
 #### 项目地址
 
