@@ -1,5 +1,9 @@
 # Unexpected_information
 Unexpected information Extensions
+---
+Author: xiaowei
+Team: Timeline Sec Team
+---
 
 最近写了一个BurpSuite Extensions用来标记请求包中的一些敏感信息、JS接口和一些特殊字段，防止我们疏忽了一些数据包，我将它命名为“Unexpected information”，使用它可能会有意外的收获信息。
 
