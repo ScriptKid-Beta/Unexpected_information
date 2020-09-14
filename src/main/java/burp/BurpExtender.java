@@ -55,9 +55,8 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
         // 將返回包的頭部和内容分開
         byte[] response = messageInfo.getResponse();
 
-        IResponseInfo ana_response = helpers.analyzeResponse(response);
-
         // 包的頭部和内容(未使用)
+//        IResponseInfo ana_response = helpers.analyzeResponse(response);
 //        byte[] byte_response = Arrays.copyOfRange(response, ana_response.getBodyOffset(), response.length);
 //        byte[] byte_response_head = Arrays.copyOfRange(response, 0, ana_response.getBodyOffset());
 
@@ -85,8 +84,6 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
         if (Re.IdCard(new String(request)).length() != 0 || Re.IdCard(new String(response)).length() != 0){
             messageInfo.setHighlight("green");
         }
-
-
     }
 
     @Override
