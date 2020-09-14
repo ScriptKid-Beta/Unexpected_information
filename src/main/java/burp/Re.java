@@ -17,16 +17,14 @@ public class Re {
             if (matcher.group().length() == 11) {
                 String is_phone = "^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|17[6|7|9]|18[0-9])\\d{8}$";
                 Matcher matcher2 = Pattern.compile(is_phone).matcher(matcher.group());
-                if (matcher2 != null) {
                     while (matcher2.find()) {
                         phones.add(matcher2.group());
-                    }
                 }
             }
         }
         return StringUtils.strip(phones.toString(),"[]");
     }
-    // 匹配地址
+    // 匹配地址(*)
     public static String Address(String str){
         String address = new String();
         String is_address ="(?:(北京|天津|上海|重庆|台湾|.+(省|自治区|特别行政区))(?:市)?.+(市|自治州).+(区|县|旗)?.+(?:(镇|乡|街道))?.+(?:(.+[村|社区|街道])).*)" +
@@ -71,7 +69,7 @@ public class Re {
         }
         return  StringUtils.strip(ip.toString(),"[]");
     }
-    // 内网ip
+    // 内网ip匹配
     public static boolean in_ip(String str){
         String in_ip = "(?:10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|(?:172\\.(?:(?:1[6-9])|(?:2\\d)|(?:3[01]))\\.\\d{1,3}\\.\\d{1,3})|(?:192\\.168\\.\\d{1,3}\\.\\d{1,3})";
         Matcher matcher = Pattern.compile(in_ip).matcher(str);
