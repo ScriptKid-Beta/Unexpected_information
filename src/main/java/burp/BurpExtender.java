@@ -17,7 +17,7 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
         // 设置插件名字
-        callbacks.setExtensionName("Unexpected information V1.6");
+        callbacks.setExtensionName("Unexpected information v1.8");
         this.callbacks = callbacks;
         this.stdout = new PrintWriter(callbacks.getStdout(), true);
         this.helpers = callbacks.getHelpers();
