@@ -3,8 +3,12 @@ package burp;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Re {
     // 手机号匹配
@@ -22,7 +26,9 @@ public class Re {
                 }
             }
         }
-        return StringUtils.strip(phones.toString(),"[]");
+        // 去重
+        List<String> phones_rd = Re.removeDuplicate(phones);
+        return StringUtils.strip(phones_rd.toString(),"[]");
     }
     // 匹配地址(*)
     public static String Address(String str){
@@ -50,12 +56,15 @@ public class Re {
         ArrayList<String> pwd = new ArrayList<>();
         String is_pwd = "(?:\"pwd\"|\"password\":|pwd=|password=|config/api" +
                 "|method: 'get'|method: 'post'|method: \"get\"|method: \"post\"" +
-                "|service\\.httppost|service\\.httpget|\\$\\.ajax|http\\.get\\(\"|http\\.post\\(\")";
+                "|service\\.httppost|service\\.httpget|\\$\\.ajax|http\\.get\\(\"|http\\.post\\(\"" +
+                "rememberMe=delete|[A|a]ccess[K|k]ey[I|i]d|[A|a]ccess[K|k]ey[S|s]ecret)";
         Matcher matcher = Pattern.compile(is_pwd).matcher(str);
         while (matcher.find()){
             pwd.add(matcher.group());
         }
-        return  StringUtils.strip(pwd.toString(),"[]");
+        // 去重
+        List<String> pwd_rd = Re.removeDuplicate(pwd);
+        return  StringUtils.strip(pwd_rd.toString(),"[]");
 
     }
     // ip地址匹配
@@ -67,7 +76,9 @@ public class Re {
         while (matcher.find()){
             ip.add(matcher.group());
         }
-        return  StringUtils.strip(ip.toString(),"[]");
+        // 去重
+        List<String> ip_rd = Re.removeDuplicate(ip);
+        return  StringUtils.strip(ip_rd.toString(),"[]");
     }
     // 内网ip匹配
     public static boolean in_ip(String str){
@@ -86,21 +97,27 @@ public class Re {
         while (matcher.find()){
             email.add(matcher.group());
         }
-        return  StringUtils.strip(email.toString(),"[]");
+        // 去重
+        List<String> email_rd = Re.removeDuplicate(email);
+        return  StringUtils.strip(email_rd.toString(),"[]");
     }
 
     // js路径匹配
     public static String Path(String str){
-//        ArrayList<String> path = new ArrayList<>();   //使用了String拼接
-        String path = new String();
+        ArrayList<String> path = new ArrayList<>();
+        String path1 = new String();
         String is_path = "[\"|'](/[0-9a-z.]+(?:/[\\w,\\?,-,_]*?)+)[\"|']";
         Matcher matcher = Pattern.compile(is_path).matcher(str);
         while (matcher.find()){
-//                path.add(matcher.group());
-            path += StringUtils.strip(matcher.group(),"\"'")+'\n';
+                path.add(matcher.group());
         }
-//            return  StringUtils.strip(path.toString(),"[]");
-        return path;
+        // 去重代码
+        List<String> path_rd = Re.removeDuplicate(path);
+        for (String s : path_rd){
+            System.out.println(path1 += StringUtils.strip(s,"\"'")+'\n');
+        }
+//        return  StringUtils.strip(path1,"[]");
+        return path1;
     }
     // 判断javascript文件
     public static boolean js (String headers,byte[] content){
@@ -110,6 +127,12 @@ public class Re {
             }
         }
         return false;
+    }
+    // 去重代码
+    public static List<String> removeDuplicate (ArrayList<String> strings){
+    List<String> list2 = new ArrayList(strings);
+    list2 = list2.stream().distinct().collect(Collectors.toList());
+    return list2;
     }
 
 }
