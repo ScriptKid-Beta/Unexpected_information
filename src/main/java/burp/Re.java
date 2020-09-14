@@ -57,7 +57,7 @@ public class Re {
         String is_pwd = "(?:\"pwd\"|\"password\":|pwd=|password=|config/api" +
                 "|method: 'get'|method: 'post'|method: \"get\"|method: \"post\"" +
                 "|service\\.httppost|service\\.httpget|\\$\\.ajax|http\\.get\\(\"|http\\.post\\(\"" +
-                "rememberMe=delete|[A|a]ccess[K|k]ey[I|i]d|[A|a]ccess[K|k]ey[S|s]ecret)";
+                "rememberMe=delete|[A|a]ccess[K|k]ey|[A|a]ccess[T|t]oken|api_secret|app_secret)";
         Matcher matcher = Pattern.compile(is_pwd).matcher(str);
         while (matcher.find()){
             pwd.add(matcher.group());
