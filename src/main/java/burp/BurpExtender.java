@@ -2,7 +2,7 @@ package burp;
 
 import java.awt.*;
 import java.io.PrintWriter;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
 public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorTabFactory{
@@ -17,7 +17,7 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
         // 设置插件名字
-        callbacks.setExtensionName("Unexpected information v1.8");
+        callbacks.setExtensionName("Unexpected information v1.9");
         this.callbacks = callbacks;
         this.stdout = new PrintWriter(callbacks.getStdout(), true);
         this.helpers = callbacks.getHelpers();
@@ -114,7 +114,7 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
                 byte[] request_body = Arrays.copyOfRange(content, request.getBodyOffset(), content.length);
 
                 if (Re.Phone(new String(content)).length() != 0 || Re.IdCard(new String(content)).length() != 0
-                        || Re.IP(new String(request_body)).length() != 0 || Re.Email(new String(request_body)).length() != 0){
+                        || Re.IP(new String(request_body)).length() != 0 || Re.Email(new String(content)).length() != 0){
                     return true;
                 }
             }else { // 返回包匹配
