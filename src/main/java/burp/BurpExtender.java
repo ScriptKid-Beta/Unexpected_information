@@ -1,117 +1,197 @@
 package burp;
 
-import org.apache.commons.lang3.StringUtils;
+import java.awt.*;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.List;
 
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorTabFactory{
+    public static  PrintWriter stdout;
+    public static IBurpExtenderCallbacks callbacks;
+    public static IExtensionHelpers helpers;
+    public static String PluginName = "PluginName:Unexpected information";
+    public static String Author = "Author:xiaowei";
+    public static String Team = "Team:Timeline Sec";
 
-public class Re {
-    // 手机号匹配
-    public static String Phone(String str){
-        ArrayList<String> phones = new ArrayList<>();
-        String is_number = "\\d{11,}";
-        Matcher matcher = Pattern.compile(is_number).matcher(str);
-        while (matcher.find())
-        {
-            if (matcher.group().length() == 11) {
-                String is_phone = "^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|17[6|7|9]|18[0-9])\\d{8}$";
-                Matcher matcher2 = Pattern.compile(is_phone).matcher(matcher.group());
-                if (matcher2 != null) {
-                    while (matcher2.find()) {
-                        phones.add(matcher2.group());
-                    }
+
+    @Override
+    public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
+        // 设置插件名字
+        callbacks.setExtensionName("Unexpected information V1.6");
+        this.callbacks = callbacks;
+        this.stdout = new PrintWriter(callbacks.getStdout(), true);
+        this.helpers = callbacks.getHelpers();
+
+        // 注册
+        callbacks.registerMessageEditorTabFactory(this);
+        callbacks.registerHttpListener(this);
+
+        // 输出插件信息
+        BurpExtender.stdout.println(PluginName);
+        BurpExtender.stdout.println(Author);
+        BurpExtender.stdout.println(Team);
+
+    }
+
+    @Override
+    public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
+        if (messageInfo == null){
+            return;
+        }
+        if (messageInfo.getRequest() == null){
+            return;
+        }
+        if (messageInfo.getResponse() == null){
+            return;
+        }
+        // 將請求包的頭部和内容分開
+        byte[] request = messageInfo.getRequest();
+        IRequestInfo ana_request = helpers.analyzeRequest(request);
+        byte[] byte_request = Arrays.copyOfRange(request, ana_request.getBodyOffset(), request.length);
+
+        // 未使用请求包头
+//        byte[] byte_request_head = Arrays.copyOfRange(request, 0, ana_request.getBodyOffset());
+
+        // 將返回包的頭部和内容分開
+        byte[] response = messageInfo.getResponse();
+
+        IResponseInfo ana_response = helpers.analyzeResponse(response);
+
+        // 包的頭部和内容(未使用)
+//        byte[] byte_response = Arrays.copyOfRange(response, ana_response.getBodyOffset(), response.length);
+//        byte[] byte_response_head = Arrays.copyOfRange(response, 0, ana_response.getBodyOffset());
+
+        // 设置高亮
+//        if (Re.IP(new String(response)).length() != 0 || Re.IP(new String(byte_request)).length() != 0){
+//            messageInfo.setHighlight("yellow");
+//        }
+        if (Re.Email(new String(request)).length() != 0 || Re.Email(new String(response)).length() != 0){
+            messageInfo.setHighlight("yellow");
+        }
+        if (Re.IP(new String(response)).length() != 0 || Re.IP(new String(byte_request)).length() != 0){
+            if (Re.in_ip(new String(response)) ||Re.in_ip(new String(byte_request))){
+                messageInfo.setHighlight("red");
+            }
+        }
+//        if (Re.Password((new String(byte_response))).length() !=0){
+//            messageInfo.setHighlight("yellow");
+//        }
+//        if (Re.Address((new String(byte_response))).length() != 0){
+//            messageInfo.setHighlight("orange");
+//        }
+        if (Re.Phone(new String(request)).length() != 0 || Re.Phone(new String(response)).length() != 0){
+            messageInfo.setHighlight("green");
+        }
+        if (Re.IdCard(new String(request)).length() != 0 || Re.IdCard(new String(response)).length() != 0){
+            messageInfo.setHighlight("green");
+        }
+
+
+    }
+
+    @Override
+    public burp.IMessageEditorTab createNewInstance(IMessageEditorController controller, boolean editable) {
+        return new IMessageEditorTab();
+    }
+
+    class IMessageEditorTab implements burp.IMessageEditorTab {
+
+        // 文本
+        private ITextEditor iTextEditor = callbacks.createTextEditor();
+
+        @Override
+        public String getTabCaption() {
+            return "Unexpected information";
+        }
+
+        @Override
+        public Component getUiComponent() {
+            return iTextEditor.getComponent();
+        }
+
+        @Override
+        public boolean isEnabled(byte[] content, boolean isRequest) {
+            if (isRequest == true){ // 请求包匹配
+                // 提取请求包body内容
+                IRequestInfo request = helpers.analyzeRequest(content);
+                byte[] request_body = Arrays.copyOfRange(content, request.getBodyOffset(), content.length);
+
+                if (Re.Phone(new String(content)).length() != 0 || Re.IdCard(new String(content)).length() != 0
+                        || Re.IP(new String(request_body)).length() != 0 || Re.Email(new String(request_body)).length() != 0){
+                    return true;
+                }
+            }else { // 返回包匹配
+                //返回包内容 (js不匹配head)
+                IResponseInfo response = helpers.analyzeResponse(content);
+                List<String> headers = response.getHeaders();
+                byte[] response_body = Arrays.copyOfRange(content, response.getBodyOffset(), content.length);
+
+                if (Re.Phone(new String(content)).length() != 0 || Re.IdCard(new String(content)).length() != 0
+                        || Re.Email(new String(content)).length() != 0 || Re.IP(new String(content)).length() != 0
+                        || Re.Password(new String(content)).length() !=0 || Re.js(headers.toString(),response_body)/** || Re.Address(new String(body)).length() !=0 **/){
+                    return true;
                 }
             }
+            return false;
         }
-        return StringUtils.strip(phones.toString(),"[]");
-    }
-    // 匹配地址
-    public static String Address(String str){
-        String address = new String();
-        String is_address ="(?:(北京|天津|上海|重庆|台湾|.+(省|自治区|特别行政区))(?:市)?.+(市|自治州).+(区|县|旗)?.+(?:(镇|乡|街道))?.+(?:(.+[村|社区|街道])).*)" +
-                "|(?:(\\u5317\\u4eac|\\u5929\\u6d25|\\u4e0a\\u6d77|\\u91cd\\u5e86|\\u53f0\\u6e7e|.+(\\u7701|\\u81ea\\u6cbb\\u533a|\\u7279\\u522b\\u884c\\u653f\\u533a))(?:\\u5e02)?.+(\\u5e02|\\u81ea\\u6cbb\\u5dde).+(\\u533a|\\u53bf|\\u65d7)?.+(?:(\\u9547|\\u4e61|\\u8857\\u9053))?.+(?:(.+[\\u6751|\\u793e\\u533a|\\u8857\\u9053])).*)";
-        Matcher matcher = Pattern.compile(is_address).matcher(str);
-        while (matcher.find()){
-            address+=matcher.group();
-        }
-        return address;
-    }
-    //身份证匹配
-    public static String IdCard(String str){
-        ArrayList<String> id = new ArrayList<>();
-        String is_id = "[1-9]\\d{5}(?:19|20)\\d\\d(?:0[1-9]|1[012])(?:0[1-9]|[12]\\d|3[01])\\d{3}(?:\\d|X|x)";
-        Matcher matcher = Pattern.compile(is_id).matcher(str);
-        while (matcher.find()){
-            id.add(matcher.group());
-        }
-        return  StringUtils.strip(id.toString(),"[]");
-    }
-    //特殊字段匹配
-    public static String Password(String str){
-        ArrayList<String> pwd = new ArrayList<>();
-        String is_pwd = "(?:\"pwd\"|\"password\":|pwd=|password=|config/api" +
-                "|method: 'get'|method: 'post'|method: \"get\"|method: \"post\"" +
-                "|service\\.httppost|service\\.httpget|\\$\\.ajax|http\\.get\\(\"|http\\.post\\(\")";
-        Matcher matcher = Pattern.compile(is_pwd).matcher(str);
-        while (matcher.find()){
-            pwd.add(matcher.group());
-        }
-        return  StringUtils.strip(pwd.toString(),"[]");
 
-    }
-    // ip地址匹配
-    public static String IP(String str){
-        ArrayList<String> ip = new ArrayList<>();
-//        String is_ip = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
-        String is_ip = "\\b(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0]|[1-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
-        Matcher matcher = Pattern.compile(is_ip).matcher(str);
-        while (matcher.find()){
-            ip.add(matcher.group());
-        }
-        return  StringUtils.strip(ip.toString(),"[]");
-    }
-    // 内网ip
-    public static boolean in_ip(String str){
-        String in_ip = "(?:10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|(?:172\\.(?:(?:1[6-9])|(?:2\\d)|(?:3[01]))\\.\\d{1,3}\\.\\d{1,3})|(?:192\\.168\\.\\d{1,3}\\.\\d{1,3})";
-        Matcher matcher = Pattern.compile(in_ip).matcher(str);
-        if (matcher.find()){
-            return true;
-        }
-        return false;
-    }
-    //邮箱匹配
-    public static String Email(String str){
-        ArrayList<String> email = new ArrayList<>();
-        String is_email = "[\\w-]+(?:\\.[\\w-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[A-Za-z]{2,6}";
-        Matcher matcher = Pattern.compile(is_email).matcher(str);
-        while (matcher.find()){
-            email.add(matcher.group());
-        }
-        return  StringUtils.strip(email.toString(),"[]");
-    }
+        @Override
+        public void setMessage(byte[] content, boolean isRequest) {
 
-    // js路径匹配
-    public static String Path(String str){
-//        ArrayList<String> path = new ArrayList<>();   //使用了String拼接
-        String path = new String();
-        String is_path = "[\"|'](/[0-9a-z.]+(?:/[\\w,\\?,-,_]*?)+)[\"|']";
-        Matcher matcher = Pattern.compile(is_path).matcher(str);
-        while (matcher.find()){
-//                path.add(matcher.group());
-            path += StringUtils.strip(matcher.group(),"\"'")+'\n';
-        }
-//            return  StringUtils.strip(path.toString(),"[]");
-        return path;
-    }
-    // 判断javascript文件
-    public static boolean js (String headers,byte[] content){
-        if (headers.contains("/javascript")){
-            if (Re.Path(new String(content)).length() != 0){
-                return true;
+            //取头部信息以及body信息 给js判断使用
+            IResponseInfo response = helpers.analyzeResponse(content);
+            List<String> headers = response.getHeaders();
+            byte[] response_body = Arrays.copyOfRange(content, response.getBodyOffset(), content.length);
+
+            // 引用规则匹配
+            String Text = "";
+            String phone = Re.Phone(new String(content));
+            String id = Re.IdCard(new String(content));
+            String ip = Re.IP(new String(content));
+            String email = Re.Email(new String(content));
+//            String address = Re.Address(new String(content));
+            String password = Re.Password(new String(content));
+
+            // 设置文本
+            if (phone.length() != 0) {
+                Text += "Exists phone information: " +phone+ '\n';
             }
-        }
-        return false;
-    }
+            if (id.length() != 0){
+                Text += "Exists IdCard information: " +id+ '\n'+ '\n';
+            }
+            if (ip.length() != 0){
+                Text += "Exists ip information: " +ip+ '\n'+ '\n';
+            }
+            if (email.length() != 0){
+                Text += "Exists email information: " +email+ '\n'+ '\n';
+            }
+            if (password.length() !=0){
+                Text += "Exists Special Field ("+password+")"+'\n'+ '\n';
+            }
+            if(Re.js(headers.toString(),content)){
+                String path = Re.Path(new String(response_body));
+                Text += "Interface information: "+'\n'+path+ '\n';
+            }
 
+            iTextEditor.setText(helpers.stringToBytes(Text));
+
+            return;
+        }
+
+        @Override
+        public byte[] getMessage() {
+            return iTextEditor.getText();
+        }
+
+        @Override
+        public boolean isModified() {
+            return false;
+        }
+
+        @Override
+        public byte[] getSelectedData() {
+            return iTextEditor.getSelectedText();
+        }
+    }
 }
+
