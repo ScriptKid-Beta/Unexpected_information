@@ -17,7 +17,7 @@ public class Re {
         while (matcher.find())
         {
             if (matcher.group().length() == 11) {
-                String is_phone = "^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|17[6|7|9]|18[0-9])\\d{8}$";
+                String is_phone = "^(13[0-9]|14[5|7]|15[^4]|17[6-9]|18[0-9])\\d{8}$";
                 Matcher matcher2 = Pattern.compile(is_phone).matcher(matcher.group());
                     while (matcher2.find()) {
                         phones.add(matcher2.group());
@@ -90,7 +90,8 @@ public class Re {
     //邮箱匹配
     public static String Email(String str){
         ArrayList<String> email = new ArrayList<>();
-        String is_email = "[\\w-]+(?:\\.[\\w-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[A-Za-z]{2,6}";
+        // 增加png|jpg等排除
+        String is_email = "[\\w-]+(?:\\.[\\w-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+(?:((?!png))((?!jpg))((?!jpeg))((?!gif))((?!ico))((?!html))((?!js))((?!css)))[A-Za-z]{2,6}";
         Matcher matcher = Pattern.compile(is_email).matcher(str);
         while (matcher.find()){
             email.add(matcher.group());
@@ -128,7 +129,7 @@ public class Re {
     }
     // 去重代码
     public static List<String> removeDuplicate (ArrayList<String> strings){
-    List<String> list2 = new ArrayList(strings);
+    List<String> list2 = new ArrayList<String>(strings);
     list2 = list2.stream().distinct().collect(Collectors.toList());
     return list2;
     }
