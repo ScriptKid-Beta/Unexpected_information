@@ -50,6 +50,9 @@ BurpSuite >> Extender >> Extensions >> Add >> Extension type: Java >> Select fil
 
 ```
 https://github.com/ScriptKid-Beta/Unexpected_information
+
+// jar文件
+https://github.com/ScriptKid-Beta/Unexpected_information/releases
 ```
 
 #### 最后
