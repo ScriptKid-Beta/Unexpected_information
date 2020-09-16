@@ -17,7 +17,7 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
         // 设置插件名字
-        callbacks.setExtensionName("Unexpected information v1.9");
+        callbacks.setExtensionName("Unexpected information v2.0");
         this.callbacks = callbacks;
         this.stdout = new PrintWriter(callbacks.getStdout(), true);
         this.helpers = callbacks.getHelpers();
@@ -46,8 +46,9 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
         }
         // 將請求包的頭部和内容分開
         byte[] request = messageInfo.getRequest();
-        IRequestInfo ana_request = helpers.analyzeRequest(request);
-        byte[] byte_request = Arrays.copyOfRange(request, ana_request.getBodyOffset(), request.length);
+        // 未使用
+//        IRequestInfo ana_request = helpers.analyzeRequest(request);
+//        byte[] byte_request = Arrays.copyOfRange(request, ana_request.getBodyOffset(), request.length);
 
         // 未使用请求包头
 //        byte[] byte_request_head = Arrays.copyOfRange(request, 0, ana_request.getBodyOffset());
@@ -64,13 +65,16 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
 //        if (Re.IP(new String(response)).length() != 0 || Re.IP(new String(byte_request)).length() != 0){
 //            messageInfo.setHighlight("yellow");
 //        }
-        if (Re.Email(new String(request)).length() != 0 || Re.Email(new String(response)).length() != 0){
+        if (/** Re.Email(new String(request)).length() != 0 ||**/ Re.Email(new String(response)).length() != 0){
             messageInfo.setHighlight("yellow");
         }
-        if (Re.IP(new String(response)).length() != 0 || Re.IP(new String(byte_request)).length() != 0){
-            if (Re.in_ip(new String(response)) ||Re.in_ip(new String(byte_request))){
-                messageInfo.setHighlight("red");
-            }
+//        if (Re.IP(new String(response)).length() != 0 /**|| Re.IP(new String(byte_request)).length() != 0**/ ){
+//            if (Re.in_ip(new String(response)) /**||Re.in_ip(new String(byte_request)) **/){
+//                messageInfo.setHighlight("red");
+//            }
+//        }
+        if (Re.in_ip(new String(response))){
+            messageInfo.setHighlight("red");
         }
 //        if (Re.Password((new String(byte_response))).length() !=0){
 //            messageInfo.setHighlight("yellow");
@@ -78,7 +82,7 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
 //        if (Re.Address((new String(byte_response))).length() != 0){
 //            messageInfo.setHighlight("orange");
 //        }
-        if (Re.Phone(new String(request)).length() != 0 || Re.Phone(new String(response)).length() != 0){
+        if (/** Re.Phone(new String(request)).length() != 0 || **/Re.Phone(new String(response)).length() != 0){
             messageInfo.setHighlight("green");
         }
         if (Re.IdCard(new String(request)).length() != 0 || Re.IdCard(new String(response)).length() != 0){
