@@ -80,7 +80,7 @@ public class Re {
     }
     // 内网ip匹配
     public static boolean in_ip(String str){
-        String in_ip = "(?:10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})|(?:172\\.(?:(?:1[6-9])|(?:2\\d)|(?:3[01]))\\.\\d{1,3}\\.\\d{1,3})|(?:192\\.168\\.\\d{1,3}\\.\\d{1,3})";
+        String in_ip = "\\b(?:(10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}))|(?:172\\.(?:(?:1[6-9])|(?:2\\d)|(?:3[01]))\\.\\d{1,3}\\.\\d{1,3})|(?:192\\.168\\.\\d{1,3}\\.\\d{1,3})";
         Matcher matcher = Pattern.compile(in_ip).matcher(str);
         if (matcher.find()){
             return true;
@@ -91,7 +91,7 @@ public class Re {
     public static String Email(String str){
         ArrayList<String> email = new ArrayList<>();
         // 增加png|jpg等排除
-        String is_email = "[\\w-]+(?:\\.[\\w-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+(?:((?!png))((?!jpg))((?!jpeg))((?!gif))((?!ico))((?!html))((?!js))((?!css)))[A-Za-z]{2,6}";
+        String is_email = "[\\w-]+(?:\\.[\\w-]+)*@([\\w](?:[\\w-]*[\\w])?\\.)+(?:((?!png))((?!jpg))((?!jpeg))((?!gif))((?!ico))((?!html))((?!js))((?!css)))[A-Za-z]{2,6}";
         Matcher matcher = Pattern.compile(is_email).matcher(str);
         while (matcher.find()){
             email.add(matcher.group());
