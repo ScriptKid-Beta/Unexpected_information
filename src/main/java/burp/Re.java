@@ -12,7 +12,7 @@ public class Re {
     // 手机号匹配
     public static String Phone(String str){
         ArrayList<String> phones = new ArrayList<>();
-        String is_number = "\\d{11,}";
+        String is_number = "\\b\\d{11,}";
         Matcher matcher = Pattern.compile(is_number).matcher(str);
         while (matcher.find())
         {
@@ -105,7 +105,7 @@ public class Re {
     public static String Path(String str){
         ArrayList<String> path = new ArrayList<>();
         String path1 = new String();
-        String is_path = "[\"|'](/[0-9a-z.]+(?:/[\\w,\\?,-,_]*?)+)[\"|']";
+        String is_path = "[\"|'](?:(\\.)*/|/)[0-9a-zA-Z.]+(?:((/[\\w,\\?,-,_,.]*)+)|[\"|'])";
         Matcher matcher = Pattern.compile(is_path).matcher(str);
         while (matcher.find()){
                 path.add(matcher.group());
@@ -113,7 +113,7 @@ public class Re {
         // 去重代码
         List<String> path_rd = Re.removeDuplicate(path);
         for (String s : path_rd){
-            System.out.println(path1 += StringUtils.strip(s,"\"'")+'\n');
+            path1 += StringUtils.strip(s,"\"'")+'\n';
         }
 //        return  StringUtils.strip(path1,"[]");
         return path1;
