@@ -90,7 +90,6 @@ public class Re {
     //邮箱匹配
     public static String Email(String str){
         ArrayList<String> email = new ArrayList<>();
-        // 增加png|jpg等排除
         String is_email = "\\b[\\w-]+(?:\\.[\\w-]+)*@([\\w](?:[\\w-]*[\\w])?\\.)+(?:((?!png))((?!jpg))((?!jpeg))((?!gif))((?!ico))((?!html))((?!js))((?!css)))[A-Za-z]{2,6}";
         Matcher matcher = Pattern.compile(is_email).matcher(str);
         while (matcher.find()){
