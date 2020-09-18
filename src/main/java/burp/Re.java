@@ -42,7 +42,7 @@ public class Re {
     //身份证匹配
     public static String IdCard(String str){
         ArrayList<String> id = new ArrayList<>();
-        String is_id = "[1-9]\\d{5}(?:19|20)\\d\\d(?:0[1-9]|1[012])(?:0[1-9]|[12]\\d|3[01])\\d{3}(?:\\d|X|x)";
+        String is_id = "\\b[1-9]\\d{5}(?:19|20)\\d\\d(?:0[1-9]|1[012])(?:0[1-9]|[12]\\d|3[01])\\d{3}(?:\\d|X|x)";
         Matcher matcher = Pattern.compile(is_id).matcher(str);
         while (matcher.find()){
             id.add(matcher.group());
@@ -91,7 +91,7 @@ public class Re {
     public static String Email(String str){
         ArrayList<String> email = new ArrayList<>();
         // 增加png|jpg等排除
-        String is_email = "[\\w-]+(?:\\.[\\w-]+)*@([\\w](?:[\\w-]*[\\w])?\\.)+(?:((?!png))((?!jpg))((?!jpeg))((?!gif))((?!ico))((?!html))((?!js))((?!css)))[A-Za-z]{2,6}";
+        String is_email = "\\b[\\w-]+(?:\\.[\\w-]+)*@([\\w](?:[\\w-]*[\\w])?\\.)+(?:((?!png))((?!jpg))((?!jpeg))((?!gif))((?!ico))((?!html))((?!js))((?!css)))[A-Za-z]{2,6}";
         Matcher matcher = Pattern.compile(is_email).matcher(str);
         while (matcher.find()){
             email.add(matcher.group());
@@ -105,7 +105,8 @@ public class Re {
     public static String Path(String str){
         ArrayList<String> path = new ArrayList<>();
         String path1 = new String();
-        String is_path = "[\"|'](?:(\\.)*/|/)[0-9a-zA-Z.]+(?:((/[\\w,\\?,-,_,.]*)+)|[\"|'])";
+		// String is_path = "[\"|'](?:(\\.)*/|/)[0-9a-zA-Z.]+(?:((/[\\w,\\?,-,_,.]*)+)|[\"|'])";
+        String is_path = "[\"|'](/[0-9a-z.]+(?:/[\\w,\\?,-,_]*?)+)[\"|']";
         Matcher matcher = Pattern.compile(is_path).matcher(str);
         while (matcher.find()){
                 path.add(matcher.group());
