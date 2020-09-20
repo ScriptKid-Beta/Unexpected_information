@@ -47,7 +47,9 @@ public class Re {
         while (matcher.find()){
             id.add(matcher.group());
         }
-        return  StringUtils.strip(id.toString(),"[]");
+        // 去重
+        List<String> id_rd = Re.removeDuplicate(id);
+        return  StringUtils.strip(id_rd.toString(),"[]");
     }
     //特殊字段匹配
     public static String Password(String str){
