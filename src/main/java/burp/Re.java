@@ -107,7 +107,7 @@ public class Re {
         ArrayList<String> path = new ArrayList<>();
         String path1 = new String();
 		// String is_path = "[\"|'](?:(\\.)*/|/)[0-9a-zA-Z.]+(?:((/[\\w,\\?,-,_,.]*)+)|[\"|'])";
-        String is_path = "[\"|'](/[0-9a-z.]+(?:/[\\w,\\?,-,_]*?)+)[\"|']";
+        String is_path = "[\"|'](/[0-9a-zA-Z.]+(?:/[\\w,\\?,-,_]*?)+)[\"|']";
         Matcher matcher = Pattern.compile(is_path).matcher(str);
         while (matcher.find()){
                 path.add(matcher.group());
@@ -122,7 +122,7 @@ public class Re {
     }
     // 判断javascript文件
     public static boolean js (String headers,byte[] content){
-        if (headers.contains("/javascript")){
+        if (headers.contains("/javascript")||headers.contains("/x-javascript") ){
             if (Re.Path(new String(content)).length() != 0){
                 return true;
             }
