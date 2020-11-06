@@ -57,7 +57,7 @@ public class Re {
         String is_pwd = "(?:\"pwd\"|\"password\":|pwd=|password=|config/api" +
                 "|method: 'get'|method: 'post'|method: \"get\"|method: \"post\"" +
                 "|service\\.httppost|service\\.httpget|\\$\\.ajax|http\\.get\\(\"|http\\.post\\(\"" +
-                "rememberMe=delete|[A|a]ccess[K|k]ey|[A|a]ccess[T|t]oken|api_secret|app_secret)";
+                "rememberMe=delete|[A|a]ccess[K|k]ey|[A|a]ccess[T|t]oken|api_secret|app_secret|(ey[A-Za-z0-9_\\/+-]{34,}\\.[A-Za-z0-9._\\/+-]*))";
         Matcher matcher = Pattern.compile(is_pwd).matcher(str);
         while (matcher.find()){
             pwd.add(matcher.group());
@@ -107,7 +107,7 @@ public class Re {
         ArrayList<String> path = new ArrayList<>();
         String path1 = new String();
 		// String is_path = "[\"|'](?:(\\.)*/|/)[0-9a-zA-Z.]+(?:((/[\\w,\\?,-,_,.]*)+)|[\"|'])";
-        String is_path = "[\"|'](/[0-9a-zA-Z.]+(?:/[\\w,\\?,-,_]*?)+)[\"|']";
+        String is_path = "[\"|'](/[0-9a-zA-Z.]+(?:/[\\w,\\?,-,\\.,_]*?)+)[\"|']";
         Matcher matcher = Pattern.compile(is_path).matcher(str);
         while (matcher.find()){
                 path.add(matcher.group());
@@ -120,7 +120,22 @@ public class Re {
 //        return  StringUtils.strip(path1,"[]");
         return path1;
     }
-    // 判断javascript文件
+    public static String Url(String str){
+        ArrayList<String> url = new ArrayList<>();
+        String url1 = new String();
+        String is_url = "([\"|'](http|https):\\/\\/([\\w.]+\\/?)\\S*?[\"|'])";
+        Matcher matcher = Pattern.compile(is_url).matcher(str);
+        while (matcher.find()){
+            url.add(matcher.group());
+        }
+        // 去重代码
+        List<String> path_rd = Re.removeDuplicate(url);
+        for (String s : path_rd){
+            url1 += StringUtils.strip(s,"\"'")+'\n';
+        }
+        return url1;
+    }
+        // 判断javascript文件
     public static boolean js (String headers,byte[] content){
         if (headers.contains("/javascript")||headers.contains("/x-javascript") ){
             if (Re.Path(new String(content)).length() != 0){
