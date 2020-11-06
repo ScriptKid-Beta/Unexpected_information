@@ -17,7 +17,7 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
         // 设置插件名字
-        callbacks.setExtensionName("Unexpected information v2.1");
+        callbacks.setExtensionName("Unexpected information v2.3");
         this.callbacks = callbacks;
         this.stdout = new PrintWriter(callbacks.getStdout(), true);
         this.helpers = callbacks.getHelpers();
@@ -155,7 +155,7 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
 
             // 设置文本
             if (phone.length() != 0) {
-                Text += "Exists phone information: " +phone+ '\n';
+                Text += "Exists phone information: " +phone+ '\n'+ '\n';
             }
             if (id.length() != 0){
                 Text += "Exists IdCard information: " +id+ '\n'+ '\n';
@@ -171,7 +171,15 @@ public class BurpExtender implements IBurpExtender,IHttpListener,IMessageEditorT
             }
             if(Re.js(headers.toString(),content)){
                 String path = Re.Path(new String(response_body));
-                Text += "Interface information: "+'\n'+path+ '\n';
+                if (path.length() != 0) {
+                    Text += "Interface information: " + '\n' + path + '\n';
+                }
+            }
+            if(Re.js(headers.toString(),content)){
+                String url = Re.Url(new String(response_body));
+                if (url.length() != 0){
+                    Text += "URL information: "+'\n'+url+ '\n';
+                }
             }
 
             iTextEditor.setText(helpers.stringToBytes(Text));
