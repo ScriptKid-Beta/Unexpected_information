@@ -15,7 +15,10 @@ Email: xiaowei@timelinesec.com
 - [x] IP信息
 - [x] 邮箱信息
 - [x] JS文件API接口路径
-- [x] 特殊字段(password、method: "post"...)
+- [x] JS文件URL
+- [x] 特殊字段(password、method: "post"...)https://github.com/ScriptKid-Beta/Unexpected_information/blob/9e606f8ce080ea7d29349fdab161701a37468ee9/src/main/java/burp/Re.java#L57
+- [x] JSON Web Token
+- [x] shiro(rememberMe=delete)
 - [x] 双向检测
 - [x] 高亮显示
 
